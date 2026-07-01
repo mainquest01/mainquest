@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Mobile App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: sans-serif; }
+        
+        /* Màn hình Start ban đầu */
+        #start-screen {
+            position: fixed; width: 100%; height: 100%; z-index: 10;
+            display: flex; justify-content: center; align-items: center;
+            background: linear-gradient(135deg, #1e1e2f, #0f0c1b);
+        }
+        #start-btn {
+            padding: 15px 40px; font-size: 24px; font-weight: bold; color: #fff;
+            background: #ff4757; border: none; border-radius: 30px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4); transition: 0.2s;
+        }
+        #start-btn:active { transform: scale(0.95); }
+
+        /* Khung hiển thị ảnh Full màn hình */
+        #game-screen { position: relative; width: 100%; height: 100%; cursor: pointer; }
+        .slide-img {
+            position: absolute; width: 100%; height: 100%; 
+            object-fit: cover; /* Giúp ảnh tự đầy màn hình không bị méo */
+            opacity: 0; transition: opacity 0.8s ease-in-out; /* Hiệu ứng mượt mà */
+        }
+        .slide-img.active { opacity: 1; } /* Ảnh nào có class active mới hiện */
+    </style>
+</head>
+<body>
+
+    <!-- 1. MÀN HÌNH START BAN ĐẦU -->
+    <div id="start-screen">
+        <button id="start-btn">START 🎮</button>
+    </div>
+
+    <!-- 2. MÀN HÌNH CHỨA ẢNH LOOP -->
+    <div id="game-screen">
+        <!-- Muốn thêm bao nhiêu ảnh tùy thích vào đây, chỉ cần đổi link trong src -->
+        <img class="slide-img active" src="https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyMGozeHBxYjB1dGFjd253cHNkMGFuMzFwOXNjd21mMDdqYjM0ZHJueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jliL5Sbbla5Ya4s1Zx/giphy.gif" alt="Ảnh 1">
+        <img class="slide-img" src="https://https://media.tenor.com/E0tL86jq14gAAAAj/femboy-furry.gif" alt="Ảnh 2">
+        <img class="slide-img"https//"https://i.pinimg.com/736x/a1/72/69/a17269641296a9cd0dcd55626d09a5fe.jpg" alt="Ảnh 3">
+    </div>
+
+    <script>
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const gameScreen = document.getElementById('game-screen');
+        const images = document.querySelectorAll('.slide-img');
+        
+        let currentIndex = 0;
+
+        // Bấm START để vào app
+        startBtn.addEventListener('click', () => {
+            startScreen.style.display = 'none'; // Ẩn màn hình start
+        </script>
+</body>
+</html>
+
+        // Xử lý bấm vào màn hình để đổi ảnh dần dần
+        gameScreen.addEventListener('click', () => {
+            // 1. Cho ảnh hiện tại mờ dần đi
+            images[currentIndex].classList.remove('active');
+            
+            // 2. Tính toán vị trí ảnh tiếp theo (Vòng lặp vô hạn)
+            currentIndex = (currentIndex + 1) % images.length;
+            
+            // 3. Cho ảnh mới từ từ hiện lên
+            images[currentIndex].classList.add('active');
+        });
