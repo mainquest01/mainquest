@@ -28,9 +28,10 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            background-color: #121212; /* Đảm bảo nền khung là đen tuyệt đối */
         }
 
-        /* Hiệu ứng mờ dần chuyển cảnh mượt mà trg 1s */
+        /* Hiệu ứng mờ dần chuyển cảnh + Tự động hòa trộn nền ảnh vào nền đen */
         img {
             max-width: 100%;
             max-height: 100%;
@@ -38,7 +39,10 @@
             opacity: 1;
             transition: opacity 1s ease-in-out;
             border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            
+            /* 🌟 MẸO TỐI THƯỢNG: Hòa trộn nền ảnh xám/tối thẳng vào màu nền đen, nổi bật nhân vật */
+            mix-blend-mode: screen; 
+            filter: contrast(1.1) brightness(1); /* Tăng nhẹ độ tương phản để nhân vật tách biệt hơn */
         }
 
         /* Lớp dùng để ẩn ảnh tạm thời khi bấm click */
@@ -54,16 +58,19 @@
     </div>
 
     <script>
-        // 🚀 MẢNG CHỨA 5 ẢNH/GIF BẤT TỬ ĐÃ ĐƯỢC CHÈN SẴN (2 GIFS + 3 IMAGES)
-        // Sau này bro up ảnh lên GitHub thì cứ đổi đống này thành "ten_file.gif", "ten_file.png"... nha son!
+        // 🚀 MẢNG 6 ẢNH/GIF NGON NGHẺ (ĐÃ XOÁ SẠCH LINK PIN LỖI THEO Ý BRO)
         let danhSachAnh = [
             "https://i.pinimg.com/originals/ad/78/f7/ad78f73c5213a56d5a4205627ac7af5f.gif", // GIF 1
             "https://gifdb.com/images/thumbnail/adorable-anime-astolfo-blank-stare-1vcua8h305dw869w.gif", // GIF 2
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjjheJJfmgKXoLDhxtGAXDtAUUf0klLi57WTkHuu9gwA&s=10", // Ảnh 1 
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsx895q3lAjUHTYYm-Mu5PGLjkzvgQTYXvJWiJ-IvxiQ&s=10", // Ảnh 2 
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZd07x0OEYBkZC9168g0Usu8dDdrmFWBrYOB_y9J2myA&s=10",  // Ảnh 3
-           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOT44pli3nKpI46I6-dHIQxdicbBQyfjDT3XvAZeP9qg&s=10", // Ảnh 4
-            "https://pin.it/4o5wujjOd" // Ảnh 5
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZd07x0OEYBkZC9168g0Usu8dDdrmFWBrYOB_y9J2myA&s=10", // Ảnh 3
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOT44pli3nKpI46I6-dHIQxdicbBQyfjDT3XvAZeP9qg&s=10",  // Ảnh 4
+            "https://i.pinimg.com/736x/66/99/8f/66998fcb203512c01af0f0c46aa34ef3.jpg", //Ảnh 5
+            "https://i.pinimg.com/736x/10/2a/02/102a029e2d1209a7d55bb239a3bb012f.jpg", //Ảnh 6
+            "https://i.pinimg.com/736x/ff/ad/86/ffad866d1bf00fbcf8624f23827d4c47.jpg", //Ảnh 7
+            "https://i.pinimg.com/736x/dd/04/43/dd0443c5075f2f4cc9731d8ca259037e.jpg", //Ảnh 8
+            "https://i.pinimg.com/736x/43/35/fe/4335fea96d74c6617b1adbc27de09dd7.jpg" //Ảnh 9
         ];
 
         let indexHienTai = 0;
@@ -74,51 +81,46 @@
         function xaoTronDanhSach(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]]; // Đổi chỗ các phần tử
+                [array[i], array[j]] = [array[j], array[i]]; 
             }
         }
 
-        // Khởi động game: Trộn ảnh xong lôi cái đầu tiên lên chạy luôn (Bỏ nút Start)
+        // Khởi động game: Trộn ảnh xong lôi cái đầu tiên lên chạy luôn
         function khoiDongGame() {
             if (danhSachAnh.length > 0) {
-                xaoTronDanhSach(danhSachAnh); // Quất quả trộn ngẫu nhiên luôn vrooo!
+                xaoTronDanhSach(danhSachAnh); 
                 imgElement.src = danhSachAnh[indexHienTai];
             }
         }
 
         // Hàm click thông minh: Mờ dần 1s -> Lên ảnh tiếp theo -> Hiện dần lên trg 1s + Tự động skip ảnh lỗi
         function nextImage() {
-            if (dangChuyenAnh) return; // Chống spam click phá game khi đang mờ dần
+            if (dangChuyenAnh) return; 
             dangChuyenAnh = true;
 
-            // Bước 1: Cho ảnh mờ dần trg 1s (Fade out)
             imgElement.classList.add("fade-out");
 
             setTimeout(() => {
-                // Tính toán vị trí tiếp theo, chạm mốc cuối mảng thì tự động loop về 0
                 indexHienTai = (indexHienTai + 1) % danhSachAnh.length;
                 
-                // Tạo ảnh ảo để test link trước (Bảo hiểm chống sập app)
                 let imgTester = new Image();
                 imgTester.src = danhSachAnh[indexHienTai];
                 
-                // Nếu link ảnh/GIF sống mượt mà -> Cho hiển thị thật
                 imgTester.onload = () => {
                     imgElement.src = danhSachAnh[indexHienTai];
-                    imgElement.classList.remove("fade-out"); // Hiện ảnh mới lên (Fade in)
+                    imgElement.classList.remove("fade-out"); 
                     dangChuyenAnh = false;
                 };
                 
-                // Nếu dính link lỗi -> Tự động nhảy sang ảnh tiếp theo trg 0.1s luôn!
                 imgTester.onerror = () => {
                     dangChuyenAnh = false;
-                    nextImage(); // Gọi lại chính nó để skip ảnh tạch
+                    nextImage(); 
                 };
-            }, 1000); // Chờ đúng 1s mờ hết ảnh cũ rồi mới đổi link
+            }, 1000); 
         }
 
-        // Kích hoạt chạy game luôn bách phát bách trúng
         khoiDongGame();
     </script>
 </body>
 </html>
+
