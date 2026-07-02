@@ -2,73 +2,121 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Mobile App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i love this app 👅</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: sans-serif; }
-        
-        /* Màn hình Start ban đầu */
-        #start-screen {
-            position: fixed; width: 100%; height: 100%; z-index: 10;
-            display: flex; justify-content: center; align-items: center;
-            background: linear-gradient(135deg, #1e1e2f, #0f0c1b);
+        /* Giao diện tối Dark UI siêu gọn, chống tràn, không thanh cuộn */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
         }
-        #start-btn {
-            padding: 15px 40px; font-size: 24px; font-weight: bold; color: #fff;
-            background: #ff4757; border: none; border-radius: 30px; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4); transition: 0.2s;
-        }
-        #start-btn:active { transform: scale(0.95); }
 
-        /* Khung hiển thị ảnh Full màn hình */
-        #game-screen { position: relative; width: 100%; height: 100%; cursor: pointer; }
-        .slide-img {
-            position: absolute; width: 100%; height: 100%; 
-            object-fit: cover; /* Giúp ảnh tự đầy màn hình không bị méo */
-            opacity: 0; transition: opacity 0.8s ease-in-out; /* Hiệu ứng mượt mà */
+        /* Khung chứa ảnh/GIF bảo vệ tỷ lệ khung hình */
+        .image-container {
+            width: 95vw;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
         }
-        .slide-img.active { opacity: 1; } /* Ảnh nào có class active mới hiện */
+
+        /* Hiệu ứng mờ dần chuyển cảnh mượt mà trg 1s */
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Lớp dùng để ẩn ảnh tạm thời khi bấm click */
+        .fade-out {
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
 
-    <!-- 1. MÀN HÌNH START BAN ĐẦU -->
-    <div id="start-screen">
-        <button id="start-btn">START 🎮</button>
-    </div>
-
-    <!-- 2. MÀN HÌNH CHỨA ẢNH LOOP -->
-    <div id="game-screen">
-        <!-- Muốn thêm bao nhiêu ảnh tùy thích vào đây, chỉ cần đổi link trong src -->
-        <img class="slide-img active" src="https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyMGozeHBxYjB1dGFjd253cHNkMGFuMzFwOXNjd21mMDdqYjM0ZHJueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jliL5Sbbla5Ya4s1Zx/giphy.gif" alt="Ảnh 1">
-        <img class="slide-img" src="https://https://media.tenor.com/E0tL86jq14gAAAAj/femboy-furry.gif" alt="Ảnh 2">
-        <img class="slide-img"https//"https://i.pinimg.com/736x/a1/72/69/a17269641296a9cd0dcd55626d09a5fe.jpg" alt="Ảnh 3">
+    <div class="image-container" onclick="nextImage()">
+        <img id="game-art" src="" alt="Discord Activity Art">
     </div>
 
     <script>
-        const startScreen = document.getElementById('start-screen');
-        const startBtn = document.getElementById('start-btn');
-        const gameScreen = document.getElementById('game-screen');
-        const images = document.querySelectorAll('.slide-img');
-        
-        let currentIndex = 0;
+        // 🚀 MẢNG CHỨA 5 ẢNH/GIF BẤT TỬ ĐÃ ĐƯỢC CHÈN SẴN (2 GIFS + 3 IMAGES)
+        // Sau này bro up ảnh lên GitHub thì cứ đổi đống này thành "ten_file.gif", "ten_file.png"... nha son!
+        let danhSachAnh = [
+            "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Bnd2EzYm90bXN0Y2M0bXN6N3B6bWN4am90YnR4bm14ZXF5N2Z0ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3vR8As8ZMvOyxGfe/giphy.gif", // GIF 1 (Bựa)
+            "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmsxam90YnZ4bXN6N3B6bWN4am90YnR4bm14ZXF5N2Z0ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o72F7YT6s0EMFI0za/giphy.gif", // GIF 2 (Chill)
+            "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000", // Ảnh 1 (Aesthetic)
+            "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1000", // Ảnh 2 (Art)
+            "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1000"  // Ảnh 3 (Neon Night)
+        ];
 
-        // Bấm START để vào app
-        startBtn.addEventListener('click', () => {
-            startScreen.style.display = 'none'; // Ẩn màn hình start
-        </script>
+        let indexHienTai = 0;
+        const imgElement = document.getElementById("game-art");
+        let dangChuyenAnh = false;
+
+        // 🎲 Hàm Randomize - Trộn ngẫu nhiên đống ảnh/GIF ngay khi vừa vào game
+        function xaoTronDanhSach(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Đổi chỗ các phần tử
+            }
+        }
+
+        // Khởi động game: Trộn ảnh xong lôi cái đầu tiên lên chạy luôn (Bỏ nút Start)
+        function khoiDongGame() {
+            if (danhSachAnh.length > 0) {
+                xaoTronDanhSach(danhSachAnh); // Quất quả trộn ngẫu nhiên luôn vrooo!
+                imgElement.src = danhSachAnh[indexHienTai];
+            }
+        }
+
+        // Hàm click thông minh: Mờ dần 1s -> Lên ảnh tiếp theo -> Hiện dần lên trg 1s + Tự động skip ảnh lỗi
+        function nextImage() {
+            if (dangChuyenAnh) return; // Chống spam click phá game khi đang mờ dần
+            dangChuyenAnh = true;
+
+            // Bước 1: Cho ảnh mờ dần trg 1s (Fade out)
+            imgElement.classList.add("fade-out");
+
+            setTimeout(() => {
+                // Tính toán vị trí tiếp theo, chạm mốc cuối mảng thì tự động loop về 0
+                indexHienTai = (indexHienTai + 1) % danhSachAnh.length;
+                
+                // Tạo ảnh ảo để test link trước (Bảo hiểm chống sập app)
+                let imgTester = new Image();
+                imgTester.src = danhSachAnh[indexHienTai];
+                
+                // Nếu link ảnh/GIF sống mượt mà -> Cho hiển thị thật
+                imgTester.onload = () => {
+                    imgElement.src = danhSachAnh[indexHienTai];
+                    imgElement.classList.remove("fade-out"); // Hiện ảnh mới lên (Fade in)
+                    dangChuyenAnh = false;
+                };
+                
+                // Nếu dính link lỗi -> Tự động nhảy sang ảnh tiếp theo trg 0.1s luôn!
+                imgTester.onerror = () => {
+                    dangChuyenAnh = false;
+                    nextImage(); // Gọi lại chính nó để skip ảnh tạch
+                };
+            }, 1000); // Chờ đúng 1s mờ hết ảnh cũ rồi mới đổi link
+        }
+
+        // Kích hoạt chạy game luôn bách phát bách trúng
+        khoiDongGame();
+    </script>
 </body>
 </html>
-
-        // Xử lý bấm vào màn hình để đổi ảnh dần dần
-        gameScreen.addEventListener('click', () => {
-            // 1. Cho ảnh hiện tại mờ dần đi
-            images[currentIndex].classList.remove('active');
-            
-            // 2. Tính toán vị trí ảnh tiếp theo (Vòng lặp vô hạn)
-            currentIndex = (currentIndex + 1) % images.length;
-            
-            // 3. Cho ảnh mới từ từ hiện lên
-            images[currentIndex].classList.add('active');
-        });
